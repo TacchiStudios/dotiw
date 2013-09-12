@@ -1,0 +1,248 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Dotiw by Sija</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/Sija/dotiw">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/Sija/dotiw/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/Sija/dotiw/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Dotiw</h1>
+          <p>Better distance of time in words for Rails</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/Sija">Sija</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>
+<a name="dotiw" class="anchor" href="#dotiw"><span class="octicon octicon-link"></span></a>dotiw</h1>
+
+<p>dotiw is a plugin for Rails that overrides the default <code>distance_of_time_in_words</code> and provides a more accurate output. Do you crave accuracy down to the second? So do I. That's why I made this plugin. Take this for a totally kickass example:</p>
+
+<pre><code>&gt;&gt; distance_of_time_in_words(Time.now, Time.now + 1.year + 2.months + 3.days + 4.hours + 5.minutes + 6.seconds, true)
+=&gt; "1 year, 2 months, 3 days, 4 hours, 5 minutes, and 6 seconds"
+</code></pre>
+
+<p>Also if one of the measurement is zero it will not output it:</p>
+
+<pre><code>&gt;&gt; distance_of_time_in_words(Time.now, Time.now + 1.year + 2.months + 4.hours + 5.minutes + 6.seconds, true)
+=&gt; "1 year, 2 months, 4 hours, 5 minutes, and 6 seconds"
+</code></pre>
+
+<p>Better than "about 1 year", am I right? Of course I am.</p>
+
+<p>"But Ryan!", you say, "What happens if the time is only in seconds but because of the default the seconds aren't shown? Won't it be blank?"
+"No!" I triumphantly reply:</p>
+
+<pre><code>&gt;&gt; distance_of_time_in_words(Time.now, Time.now + 1.second, false)
+=&gt; "1 second"
+</code></pre>
+
+<p>The third argument for this method is whether or not to include seconds. By default this is <code>false</code> (because in Rails' <code>distance_of_time_in_words</code> it is), you can turn it on though by passing <code>true</code> as the third argument:</p>
+
+<pre><code>&gt;&gt; distance_of_time_in_words(Time.now, Time.now + 1.year + 1.second, true)
+=&gt; "1 year, and 1 second" 
+</code></pre>
+
+<p>Yes this could just be merged into the options hash but I'm leaving it here to ensure "backwards-compatibility",
+because that's just an insanely radical thing to do. \m/</p>
+
+<p>The last argument is an optional options hash that can be used to manipulate behavior and (which uses <code>to_sentence</code>).</p>
+
+<p>Don't like having to pass in <code>Time.now</code> all the time? Then use <code>time_ago_in_words</code> which also will <em>rock your
+world</em>:</p>
+
+<pre><code>&gt;&gt; time_ago_in_words(Time.now + 3 days + 1.second)
+=&gt; "3 days, and 1 second"
+</code></pre>
+
+<p>Oh, and did I mention it supports I18n? Oh yeah. Rock on!</p>
+
+<h3>
+<a name="options" class="anchor" href="#options"><span class="octicon octicon-link"></span></a>Options</h3>
+
+<h4>
+<a name="locale" class="anchor" href="#locale"><span class="octicon octicon-link"></span></a>:locale</h4>
+
+<p>You can pass in a locale and it'll output it in whatever language you want (provided you have translations, otherwise it'll default to English):</p>
+
+<pre><code>&gt;&gt; distance_of_time_in_words(Time.now, Time.now + 1.minute, false, :locale =&gt; "es")
+=&gt; "1 minuto"
+</code></pre>
+
+<p>This will also be passed to <code>to_sentence</code></p>
+
+<h4>
+<a name="vague" class="anchor" href="#vague"><span class="octicon octicon-link"></span></a>:vague</h4>
+
+<p>Specify this if you want it to use the old <code>distance_of_time_in_words</code>. The value can be anything except <code>nil</code> or <code>false</code>.</p>
+
+<h4>
+<a name="accumulate_on" class="anchor" href="#accumulate_on"><span class="octicon octicon-link"></span></a>:accumulate_on</h4>
+
+<p>Specifies the maximum output unit which will accumulate all the surplus. Say you set it to seconds and your time difference is of 2 minutes then the output would be 120 seconds. Here's a code example:</p>
+
+<pre><code>&gt;&gt; distance_of_time_in_words(Time.now, Time.now + 2.hour + 70.second, true, :accumulate_on =&gt; :minutes)
+=&gt; "121 minutes minute and 10 seconds"
+</code></pre>
+
+<h4>
+<a name="only" class="anchor" href="#only"><span class="octicon octicon-link"></span></a>:only</h4>
+
+<p><strong>Note that values passed into this option must be passed in as strings!</strong></p>
+
+<p>Only want a specific measurement of time? No problem!</p>
+
+<pre><code>&gt;&gt; distance_of_time_in_words(Time.now, Time.now + 1.hour + 1.minute, false, :only =&gt; "minutes")
+=&gt; "1 minute"
+</code></pre>
+
+<p>You only want some? No problem too!</p>
+
+<pre><code>&gt;&gt; distance_of_time_in_words(Time.now, Time.now + 1.hour + 1.day + 1.minute, false, :only =&gt; ["minutes", "hours"])
+=&gt; "1 hour and 1 minute"
+</code></pre>
+
+<h4>
+<a name="except" class="anchor" href="#except"><span class="octicon octicon-link"></span></a>:except</h4>
+
+<p><strong>Note that values passed into this option must be passed in as strings!</strong></p>
+
+<p>Don't want a measurement of time? No problem!</p>
+
+<pre><code>&gt;&gt; distance_of_time_in_words(Time.now, Time.now + 1.hour + 1.minute, false, :except =&gt; "minutes")
+=&gt; "1 hour"
+</code></pre>
+
+<p>Culling a whole group of measurements of time:</p>
+
+<pre><code>&gt;&gt; distance_of_time_in_words(Time.now, Time.now + 1.hour + 1.day + 1.minute, false, :except =&gt; ["minutes", "hours"])
+=&gt; "1 day"
+</code></pre>
+
+<h4>
+<a name="highest_measure_only" class="anchor" href="#highest_measure_only"><span class="octicon octicon-link"></span></a>:highest_measure_only</h4>
+
+<p>For times when Rails <code>distance_of_time_in_words</code> is not precise enough and <code>DOTIW</code> is too precise. For instance, if you only want to know the highest time part (measure) that elapsed between two dates.</p>
+
+<pre><code>&gt;&gt; distance_of_time_in_words(Time.now, Time.now + 1.hour + 1.minute + 1.second, true, { :highest_measure_only =&gt; true })
+=&gt; "1 hour"
+</code></pre>
+
+<p>Notice how minutes and seconds were removed from the output. Another example:</p>
+
+<pre><code>&gt;&gt; distance_of_time_in_words(Time.now, Time.now + 1.minute + 1.second, true, { :highest_measure_only =&gt; true })
+=&gt; "1 minute"
+</code></pre>
+
+<p>Minutes are the highest measure, so seconds were discarded from the output.</p>
+
+<h4>
+<a name="highest_measuress" class="anchor" href="#highest_measuress"><span class="octicon octicon-link"></span></a>:highest_measuress</h4>
+
+<p>When you want variable precision from <code>DOTIW</code>:</p>
+
+<pre><code>&gt;&gt; distance_of_time_in_words(Time.now, Time.now + 1.hour + 1.minute + 1.second, true, { :highest_measures =&gt; 2 })
+=&gt; "1 hour and 1 minute"
+</code></pre>
+
+<h4>
+<a name="words_connector" class="anchor" href="#words_connector"><span class="octicon octicon-link"></span></a>:words_connector</h4>
+
+<p><strong>This is an option for <code>to_sentence</code>, defaults to ', '</strong></p>
+
+<p>Using something other than a comma:</p>
+
+<pre><code>&gt;&gt; distance_of_time_in_words(Time.now, Time.now + 1.hour + 1.minute + 1.second, true, { :words_connector =&gt; ' - ' })
+=&gt; "1 hour - 1 minute, and 1 second"
+</code></pre>
+
+<h4>
+<a name="two_words_connector" class="anchor" href="#two_words_connector"><span class="octicon octicon-link"></span></a>:two_words_connector</h4>
+
+<p><strong>This is an option for <code>to_sentence</code>, defaults to ' and '</strong></p>
+
+<p>Using something other than 'and':</p>
+
+<pre><code>&gt;&gt; distance_of_time_in_words(Time.now, Time.now + 1.hour + 1.minute, true, { :two_words_connector =&gt; ' plus ' })
+=&gt; "1 hour plus 1 minute"
+</code></pre>
+
+<h4>
+<a name="last_word_connector" class="anchor" href="#last_word_connector"><span class="octicon octicon-link"></span></a>:last_word_connector</h4>
+
+<p><strong>This is an option for <code>to_sentence</code>, defaults to ', and '</strong></p>
+
+<p>Using something other than ', and':</p>
+
+<pre><code>&gt;&gt; distance_of_time_in_words(Time.now, Time.now + 1.hour + 1.minute + 1.second, true, { :last_word_connector =&gt; ', finally ' })
+=&gt; "1 hour, 1 minute, finally 1 second"
+</code></pre>
+
+<h2>
+<a name="distance_of_time" class="anchor" href="#distance_of_time"><span class="octicon octicon-link"></span></a>distance_of_time</h2>
+
+<p>If you have simply a number of seconds you can get the "stringified" version of this by using <code>distance_of_time</code>:</p>
+
+<pre><code>&gt;&gt; distance_of_time(300)
+=&gt; "5 minutes"
+</code></pre>
+
+<h2>
+<a name="distance_of_time_in_words_hash" class="anchor" href="#distance_of_time_in_words_hash"><span class="octicon octicon-link"></span></a>distance_of_time_in_words_hash</h2>
+
+<p>Don't like any format you're given? That's cool too! Here, have an indifferent hash version:</p>
+
+<pre><code>&gt;&gt; distance_of_time_in_words_hash(Time.now, Time.now + 1.year + 2.months + 3.days + 4.hours + 5.minutes + 6.seconds)
+=&gt; {"days"=&gt;3, "seconds"=&gt;6, "minutes"=&gt;5, "years"=&gt;1, "hours"=&gt;4, "months"=&gt;2}
+</code></pre>
+
+<p>Indifferent means that you can access all keys by their <code>String</code> or <code>Symbol</code> version.</p>
+
+<h2>
+<a name="distance_of_time_in_percent" class="anchor" href="#distance_of_time_in_percent"><span class="octicon octicon-link"></span></a>distance_of_time_in_percent</h2>
+
+<p>If you want to calculate a distance of time in percent, use <code>distance_of_time_in_percent</code>. The first argument is the beginning time, the second argument the "current" time and the third argument is the end time. This method takes the same options as [<code>number_with_precision</code>][<a href="http://api.rubyonrails.org/classes/ActionView/Helpers/NumberHelper.html#M001687">http://api.rubyonrails.org/classes/ActionView/Helpers/NumberHelper.html#M001687</a>].</p>
+
+<pre><code>distance_of_time_in_percent("04-12-2009".to_time, "29-01-2010".to_time, "04-12-2010".to_time, options)
+</code></pre>
+
+<h2>
+<a name="contributors" class="anchor" href="#contributors"><span class="octicon octicon-link"></span></a>Contributors</h2>
+
+<ul>
+<li>[chendo][<a href="http://github.com/chendo">http://github.com/chendo</a>] - for talking through it with me and drawing on the whiteboard</li>
+<li>[Derander][<a href="http://github.com/derander">http://github.com/derander</a>] - correct Spanish translations</li>
+<li>[DBA][<a href="http://github.com/dba">http://github.com/dba</a>] - Commits leading up to the 0.7 release. </li>
+</ul>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
