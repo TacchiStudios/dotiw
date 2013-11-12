@@ -64,7 +64,7 @@ module ActionView
         options.delete(:only)
 
         output = []
-        I18n.with_options :locale => options[:locale], :scope => options.delete(:scope) do |locale|
+        I18n.with_options :locale => options[:locale], :scope => (options.delete(:scope) || 'datetime.dotiw') do |locale|
           output = hash.map { |key, value| locale.t(key, :count => value) }
         end
 
