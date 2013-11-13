@@ -80,6 +80,10 @@ describe "A better distance_of_time_in_words" do
       distance_of_time_in_words(Time.now, Time.now + 5.days, true, :locale => :es).should eql("5 días")
     end
 
+    it "日本語" do
+      distance_of_time_in_words(Time.now, Time.now + 4.hours + 5.minutes, true, :locale => :ja).should eql("4時5分")
+    end
+
     fragments = [
       [Time.now, Time.now + 5.days + 3.minutes, "5 days and 3 minutes"],
       [Time.now, Time.now + 1.minute, "1 minute"],
@@ -131,7 +135,7 @@ describe "A better distance_of_time_in_words" do
         end
       end
     end # :accumulate_on
-    
+
     describe "without finish time" do
       # A missing finish argument should default to zero, essentially returning
       # the equivalent of distance_of_time in order to be backwards-compatible
@@ -149,7 +153,7 @@ describe "A better distance_of_time_in_words" do
         end
       end
     end
-    
+
   end
 
   describe "with output options" do
