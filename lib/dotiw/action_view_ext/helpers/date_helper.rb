@@ -75,16 +75,13 @@ module ActionView
           output = output[0...highest_measures]
         end
 
-        options[:words_connector] ||= I18n.translate :'words_connector',
-          :scope => i18n_scope,
+        options[:words_connector] ||= I18n.translate :"#{i18n_scope}.words_connector",
           :default => :'support.array.words_connector',
           :locale => options[:locale]
-        options[:two_words_connector] ||= I18n.translate :'two_words_connector',
-          :scope => i18n_scope,
+        options[:two_words_connector] ||= I18n.translate :"#{i18n_scope}.two_words_connector",
           :default => :'support.array.two_words_connector',
           :locale => options[:locale]
-        options[:last_word_connector] ||= I18n.translate :'last_word_connector',
-          :scope => i18n_scope,
+        options[:last_word_connector] ||= I18n.translate :"#{i18n_scope}.last_word_connector",
           :default => :'support.array.last_word_connector',
           :locale => options[:locale]
 
